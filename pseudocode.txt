@@ -1,0 +1,78 @@
+---LINUX SHELL---
+**Needs interactive mode which allows direct user commands
+**Needs batch mode, which executes commands from a batch mode
+
+IMPLEMENTATION ORDER:
+    -Create the loop/argument parser
+    -Implement simple commands like ls
+    -Add built in commands
+    -Work on redirection
+    -Parallel commands
+
+
+**Main Loop**
+myshell(){
+    while(user not type exit){
+        print prompt myshell>
+        parse input into a data structure using getline()
+        execute command given in input
+        wait for command to finish
+    }
+}
+
+
+**Built in Commands**
+    exit or maybe quit(){
+        call exit system call with 0 as a parameter
+    }
+
+    cd(directory to change to provided by user){
+        if(0 or >1 arguments){
+            ERROR
+        }else{
+            chdir(directory to change to provided by user)
+            if(chgdir fails){
+                ERROR
+            }else{
+                change PWD variable to new directory
+            }
+
+        }
+    }
+
+    path(){
+        place arguments into a data structure. (Likely a vector)
+        parse through data structure
+            -overwrite old path with newly made path
+    }
+
+    clr
+        -Clear the screen
+    dir
+        -List the contents of the directory
+    environ
+        -List all the environment strings
+    echo
+        -Display the <comment> on the display followed by a new line
+    help
+        -Display user manual using the more filter
+    pause
+        -Pause operation of the shell until 'Enter' is pressed
+    quit
+        -Quit the shell
+
+    **Pre-made commands**
+    find_command(command name){
+        -Use access("/bin/ls", X_OK) on each path to check if a
+         particular file exists in a directory and is executable
+        -If fails, throw error
+    }
+
+
+    **Non-user functions**
+
+    print_error(){
+        char error_message[30] = "An error has occurred\n";
+        write(STDERR_FILENO, error_message, strlen(error_message));
+    }
+
