@@ -36,31 +36,33 @@ class Command{
 myshell(){
     while(user not type exit){
         print prompt myshell>
+        checkChildFinished();                      //Will notify user when a parallel process finishes
         std::vector<Command>  = parse_input();
 
         Check if there are multiple commands
             if not:
         if(command is a known built in command){
-            execute command given in input
-        }else{
+            execute command given in input using built in function
+        }else{                                                     //It is a system command
             try to execute the system command
             fork() to make a new process
             parent process:
                 if not background:
-                   wait() for child process to finish to send error
+                   wait() for child process to finish or send error
                 else if background:
                     std::cout << "pid " << pid << "started\n";
             child process:
+                if redirection:
+                    std::ofstream/std::ifstream new input/output;
+                    dup(close input or output, replace w/ new input/output);
+
                 if background:
                 execvp() to attempt to run command or send error
-                checkChildFinished();  //Will notify user when child finishes
-
         }
-
         If multiple commands:
             Run the above but with all commands in the background
 
-
+        checkChildFinished();  //Will notify user when a parallel process finishes
         wait for command(s) to finish
     }
 }
@@ -94,12 +96,7 @@ std::vector<Command> parse_input(){
         }else if(redirection){
             Add to currentCommand.redirection;
         }
-
-
-
     }
-
-
 }
 
 //Splits a string into tokens and returns them as a vector
@@ -202,6 +199,7 @@ void checkChildFinished()
 
     }
 ********BATCH MODE FILE READING********
+//Opens file and reads the file line by line
 void commands_from_file(std::string filename){
     std::string line;
     std::ifstream f (filename);
@@ -244,4 +242,36 @@ void commands_from_file(std::string filename){
         char error_message[30] = "An error has occurred\n";
         write(STDERR_FILENO, error_message, strlen(error_message));
     }
+
+
+********MAIN FUNCTION********
+    //Depending on what mode the user starts the program in, the main function
+    //will either run the batch file or start the myshell loop
+    main(args[], args){
+        if there is an argument on execution:
+            commands_from_file();
+        else:
+            myshell();
+    }
+
+
+
+
+
+********TESTING PLAN********
+        For each built in function I will write a test that checks different possible inputs and determines what a
+        successful output should be on each input. These tests will cover error possibilities, different arguments,
+        and possible redirection that might occur.
+
+        For non built-in functions, I will write tests that call those functions and determine what a successful output
+        should be for particular input. Once again, these tests will cover errors, different arguments, redirection,
+        as well as parallel functionality.
+
+        For the parser I will feed in multiple different lines that are both valid and invalid. The test will:
+            -Verify when errors should occur
+            -Verify the command is properly broken up by printing out parts and their values
+            -Verify redirection is properly noticed by printing out the redirection and its value
+                >Verify the file for redirection is picked up and correct
+            -Verify parallel commands broken up by commands and their arguments
+
 
